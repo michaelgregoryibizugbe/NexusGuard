@@ -1,0 +1,37 @@
+# NexusGuard Configuration
+
+network:
+  interface: auto  # Network interface (auto, eth0, wlan0, etc.)
+  promiscuous_mode: true  # Enable promiscuous mode
+  buffer_size: 10000  # Packet buffer size
+
+detection:
+  ml_enabled: true  # Enable ML-based detection
+  signature_check: true  # Enable signature-based detection
+  behavioral_analysis: true  # Enable behavioral analysis
+  threshold: 0.75  # Detection threshold (0.0-1.0)
+  
+  # Training
+  auto_train: true  # Auto-train ML model
+  training_samples: 1000  # Number of samples for training
+
+response:
+  auto_block: true  # Automatically block threats
+  block_duration: 3600  # Block duration in seconds
+  notify: true  # Send notifications
+  log_level: INFO  # Logging level (DEBUG, INFO, WARNING, ERROR)
+
+firewall:
+  enabled: true
+  chain_name: NEXUSGUARD
+  cleanup_on_exit: true
+
+web:
+  host: 0.0.0.0
+  port: 8080
+  debug: false
+
+tui:
+  refresh_rate: 1  # Seconds
+  max_packets_display: 100
+  theme: default

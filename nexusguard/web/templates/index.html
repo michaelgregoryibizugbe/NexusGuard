@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusGuard - IPS/IDS Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="NexusGuard">
+                <h1>NexusGuard</h1>
+            </div>
+            <nav class="nav">
+                <a href="#dashboard" class="nav-link active">Dashboard</a>
+                <a href="#threats" class="nav-link">Threats</a>
+                <a href="#blocked" class="nav-link">Blocked IPs</a>
+                <a href="#settings" class="nav-link">Settings</a>
+            </nav>
+            <div class="header-actions">
+                <button id="toggle-protection" class="btn btn-primary">
+                    <span class="status-dot" id="protection-status"></span>
+                    Enable Protection
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        📦
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Packets</h3>
+                        <p class="stat-value" id="stat-packets">0</p>
+                        <span class="stat-change positive">+12.5%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        ⚠️
+                    </div>
+                    <div class="stat-content">
+                        <h3>Threats Detected</h3>
+                        <p class="stat-value" id="stat-threats">0</p>
+                        <span class="stat-change negative">+3 new</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        🚫
+                    </div>
+                    <div class="stat-content">
+                        <h3>Blocked IPs</h3>
+                        <p class="stat-value" id="stat-blocked">0</p>
+                        <span class="stat-change">Active blocks</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        🛡️
+                    </div>
+                    <div class="stat-content">
+                        <h3>Protection Level</h3>
+                        <p class="stat-value">High</p>
+                        <span class="stat-change">ML Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3>Traffic Analysis</h3>
+                    <canvas id="traffic-chart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Threat Distribution</h3>
+                    <canvas id="threat-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Threats Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>🔥 Recent Threats</h3>
+                    <button class="btn btn-sm" id="clear-threats">Clear All</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="threats-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th>Severity</th>
+                                <th>Source IP</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="threats-tbody">
+                            <tr class="no-data">
+                                <td colspan="6">No threats detected yet. Protection is working! ✨</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Live Packet Feed -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📡 Live Packet Feed</h3>
+                    <div class="filter-buttons">
+                        <button class="btn btn-sm filter-btn active" data-filter="all">All</button>
+                        <button class="btn btn-sm filter-btn" data-filter="tcp">TCP</button>
+                        <button class="btn btn-sm filter-btn" data-filter="udp">UDP</button>
+                        <button class="btn btn-sm filter-btn" data-filter="suspicious">Suspicious</button>
+                    </div>
+                </div>
+                <div class="packet-feed" id="packet-feed">
+                    <!-- Packets will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Command Palette -->
+    <div class="command-palette" id="command-palette">
+        <input type="text" id="command-input" placeholder="Type a command... (Ctrl+K)">
+        <div class="command-suggestions" id="command-suggestions"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

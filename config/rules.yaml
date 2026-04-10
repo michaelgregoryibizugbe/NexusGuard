@@ -1,0 +1,49 @@
+# NexusGuard Detection Rules
+
+rules:
+  - name: "SQL Injection Detection"
+    type: signature
+    severity: HIGH
+    patterns:
+      - "(\%27)|(\')|(\-\-)|(\%23)|(#)"
+      - "((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))"
+    action: block
+    
+  - name: "XSS Attack Detection"
+    type: signature
+    severity: HIGH
+    patterns:
+      - "<script[^>]*>.*?</script>"
+      - "javascript:"
+      - "onerror\\s*="
+    action: alert
+    
+  - name: "Port Scan Detection"
+    type: behavioral
+    severity: MEDIUM
+    threshold: 10  # ports in 60 seconds
+    time_window: 60
+    action: alert
+    
+  - name: "DDoS Detection"
+    type: rate
+    severity: CRITICAL
+    threshold: 100  # packets per second
+    action: block
+    
+  - name: "Brute Force Detection"
+    type: behavioral
+    severity: HIGH
+    failed_attempts: 5
+    time_window: 300
+    action: block
+
+blocklists:
+  - name: "Known Malicious IPs"
+    enabled: true
+    auto_update: true
+    url: "https://example.com/blocklist.txt"
+    
+whitelists:
+  - "192.168.1.0/24"  # Local network
+  - "10.0.0.0/8"  # Private network
